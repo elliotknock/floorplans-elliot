@@ -1,0 +1,2244 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Site Maps</title>
+    <link rel="icon" type="image/x-icon" href="./images/icons/ipfavicon.jpg" />
+    <link href="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.css" rel="stylesheet" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/2.16.105/pdf.min.js"></script>
+    <link rel="stylesheet" href="styles.css" />
+  </head>
+  <body>
+    <!-- Main Sidebar -->
+    <div id="sidebar">
+      <button class="sidebar-btn" data-menu="project-options-submenu">
+        <img src="./images/icons/project-options.svg" alt="Project Options Icon" />
+        <span>Project Options</span>
+      </button>
+      <button class="sidebar-btn" data-menu="add-devices-submenu">
+        <img src="./images/icons/add-devices.svg" alt="Add Devices Icon" />
+        <span>Add Devices</span>
+      </button>
+      <button class="sidebar-btn" data-menu="drawing-tools-submenu">
+        <img src="./images/icons/drawing-tools.svg" alt="Drawing Tools Icon" />
+        <span>Drawing Tools</span>
+      </button>
+      <button class="sidebar-btn" data-menu="layer-controls-submenu">
+        <img src="./images/icons/layers.svg" alt="Layer Icon" />
+        <span>Layer Controls</span>
+      </button>
+      <button class="sidebar-btn" data-menu="client-details-submenu">
+        <img src="./images/icons/client-details.svg" alt="Client Icon" />
+        <span>Client Details</span>
+      </button>
+      <button class="sidebar-btn" data-menu="settings-submenu">
+        <img src="./images/icons/settings.svg" alt="Settings Icon" />
+        <span>Settings</span>
+      </button>
+      <div id="undo-redo-btns">
+        <button id="undo-btn" disabled>
+          <img src="./images/icons/undo-btn.svg" alt="Undo"/>
+        </button>
+        <button id="redo-btn" disabled>
+          <img src="./images/icons/redo.svg"/>
+        </button>
+      </div>
+    </div>
+
+    <!-- Sub Sidebar -->
+    <div id="sub-sidebar" class="sub-sidebar hidden">
+      <div class="offcanvas-header bg-secondary text-white">
+        <h5 class="offcanvas-title header-title" id="sub-sidebar-title">Menu</h5>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close" id="close-sub-sidebar"></button>
+      </div>
+
+      <div class="sub-sidebar-content">
+        <!-- Project Options Submenu -->
+        <div id="project-options-submenu" class="submenu">
+          <h5 class="drawing-tools-section-title" style="margin-top: 0px">Operations</h5>
+          <div class="tools-grid">
+            <div class="tool-item" data-bs-toggle="modal" data-bs-target="#customModal">
+              <div class="tool-icon"><img src="./images/icons/upload-background.svg" alt="Background Icon" /></div>
+              <div class="tool-label">Background</div>
+            </div>
+
+            <div class="tool-item" id="clear-canvas-btn">
+              <div class="tool-icon"><img src="./images/icons/clear-canvas.svg" alt="Clear Canvas Icon" /></div>
+              <div class="tool-label">Clear Canvas</div>
+            </div>
+
+            <div class="tool-item" id="save-project-btn">
+              <div class="tool-icon"><img src="./images/icons/save.svg" alt="Save Icon" /></div>
+              <div class="tool-label">Save Project</div>
+            </div>
+
+            <div class="tool-item" id="load-project-btn">
+              <div class="tool-icon"><img src="./images/icons/open.svg" alt="Open Icon" /></div>
+              <div class="tool-label">Load Project</div>
+              <input type="file" id="load-project-input" accept=".json" style="display: none" />
+            </div>
+
+            <div class="tool-item" id="open-gallery-btn">
+              <div class="tool-icon"><img src="./images/icons/open.svg" alt="Gallery Icon" /></div>
+              <div class="tool-label">Project Gallery</div>
+            </div>
+
+            <div class="tool-item" id="change-scale-btn">
+              <div class="tool-icon"><img src="./images/icons/measurement.svg" alt="Change Scale Icon" /></div>
+              <div class="tool-label">Change Scale</div>
+            </div>
+
+            <div class="tool-item" id="replace-background-btn">
+              <div class="tool-icon"><img src="./images/icons/replace-background.svg" alt="Replace Background Icon" /></div>
+              <div class="tool-label">Replace BG</div>
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- Floor Management Section -->
+          <h5 class="drawing-tools-section-title" style="margin-top: 0px">Floor Management</h5>
+
+          <div class="mb-3">
+            <span class="form-label text-white" style="font-size: 0.9rem">Current Floor:</span>
+            <div class="d-flex align-items-center gap-2">
+              <button id="floor-prev" class="btn btn-sm">&lt;</button>
+              <div id="floor-display">Floor 1</div>
+              <button id="floor-next" class="btn btn-sm">&gt;</button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <div class="d-flex gap-2">
+              <button id="floor-add" class="btn btn-sm">Add Floor</button>
+              <button id="floor-rename" class="btn btn-sm">Rename Floor</button>
+            </div>
+          </div>
+
+          <div class="mb-3">
+            <button id="floor-delete" class="btn btn-sm">Delete Floor</button>
+          </div>
+
+          <div class="mb-3">
+            <span class="form-label text-white">Quick Jump:</span>
+            <div class="d-flex flex-wrap gap-2" id="floor-quick-jump">
+              <!-- Floor buttons will be dynamically added here by JavaScript -->
+            </div>
+          </div>
+
+          <hr />
+
+          <!-- Reports & Screenshots Section -->
+          <h5 class="drawing-tools-section-title">Reports</h5>
+          <div class="tools-grid">
+            <div class="tool-item" id="download-background-btn">
+              <div class="tool-icon"><img src="./images/icons/download.svg" alt="Download Icon" /></div>
+              <div class="tool-label">Download</div>
+            </div>
+
+            <div class="tool-item" id="generate-takeoff-btn">
+              <div class="tool-icon"><img src="./images/icons/takeoff.svg" alt="Takeoff Icon" /></div>
+              <div class="tool-label">Takeoff</div>
+            </div>
+
+            <div class="tool-item" id="print-btn">
+              <div class="tool-icon"><img src="./images/icons/print.svg" alt="Print Project Icon" /></div>
+              <div class="tool-label">Print Report</div>
+            </div>
+
+            <div class="tool-item" id="capture-screenshot-btn">
+              <div class="tool-icon"><img src="./images/icons/capture-screenshot.svg" alt="Capture Screenshot Icon" /></div>
+              <div class="tool-label">Screenshot</div>
+            </div>
+
+            <div class="tool-item" id="open-topology-builder-btn">
+              <div class="tool-icon"><img src="./images/icons/network-link.svg" alt="Topology Map Icon" /></div>
+              <div class="tool-label">Topology Map</div>
+            </div>
+          </div>
+          <div id="no-screenshot-taken" class="logo-preview"><span style="color: #999">No Screenshot Taken</span></div>
+
+          <div id="screenshot-previews" style="margin-top: 10px">
+            <template id="screenshot-preview-template">
+              <div class="screenshot-preview-item">
+                <img class="screenshot-image" src="" alt="Screenshot" />
+                <div class="screenshot-controls">
+                  <label class="screenshot-checkbox-label">
+                    <input type="checkbox" class="screenshot-checkbox" />
+                    <span>Include in print</span>
+                  </label>
+                  <textarea class="screenshot-title" placeholder="Title or Description" maxlength="74"></textarea>
+                  <button class="screenshot-delete-btn">Delete</button>
+                </div>
+              </div>
+            </template>
+          </div>
+        </div>
+
+          <!-- Layer Controls Submenu -->
+          <div id="layer-controls-submenu" class="submenu">
+            <div class="mb-3">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="background-layer-toggle" checked />
+                <label class="form-check-label" for="background-layer-toggle">Background Layer</label>
+              </div>
+              <input type="range" id="background-layer-opacity-slider" class="form-range" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="zones-layer-toggle" checked />
+                <label class="form-check-label" for="zones-layer-toggle">Zones Layer</label>
+              </div>
+              <input type="range" id="zones-layer-opacity-slider" class="form-range" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="rooms-layer-toggle" checked />
+                <label class="form-check-label" for="rooms-layer-toggle">Rooms Layer</label>
+              </div>
+              <input type="range" id="rooms-layer-opacity-slider" class="form-range" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="devices-layer-toggle" checked />
+                <label class="form-check-label" for="devices-layer-toggle">Devices Layer</label>
+              </div>
+              <input type="range" id="devices-layer-opacity-slider" class="form-range" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="drawings-layer-toggle" checked />
+                <label class="form-check-label" for="drawings-layer-toggle">Drawings Layer</label>
+              </div>
+              <input type="range" id="drawings-layer-opacity-slider" class="form-range" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <hr />
+
+            <div class="mb-3">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="cctv-layer-toggle" checked />
+                <label class="form-check-label" for="cctv-layer-toggle">CCTV Layer</label>
+              </div>
+              <input type="range" id="cctv-layer-opacity-slider" class="form-range" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="intruder-layer-toggle" checked />
+                <label class="form-check-label" for="intruder-layer-toggle">Intruder Layer</label>
+              </div>
+              <input type="range" id="intruder-layer-opacity-slider" class="form-range" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="fire-layer-toggle" checked />
+                <label class="form-check-label" for="fire-layer-toggle">Fire Layer</label>
+              </div>
+              <input type="range" id="fire-layer-opacity-slider" class="form-range" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="access-layer-toggle" checked />
+                <label class="form-check-label" for="access-layer-toggle">Access Layer</label>
+              </div>
+              <input type="range" id="access-layer-opacity-slider" class="form-range" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="custom-layer-toggle" checked />
+                <label class="form-check-label" for="custom-layer-toggle">Custom Layer</label>
+              </div>
+              <input type="range" id="custom-layer-opacity-slider" class="form-range" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="networks-layer-toggle" checked />
+                <label class="form-check-label" for="networks-layer-toggle">Networks Layer</label>
+              </div>
+              <input type="range" id="networks-layer-opacity-slider" class="form-range" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="networkLinks-layer-toggle" checked />
+                <label class="form-check-label" for="networkLinks-layer-toggle">Network Links Layer</label>
+              </div>
+              <input type="range" id="networkLinks-layer-opacity-slider" class="form-range" min="0" max="100" step="1" value="100" />
+            </div>
+
+            <div class="mb-3">
+              <div class="form-check mb-2">
+                <input class="form-check-input" type="checkbox" id="textDevices-layer-toggle" checked />
+                <label class="form-check-label" for="textDevices-layer-toggle">Placeholder Text Layer</label>
+              </div>
+              <input type="range" id="textDevices-layer-opacity-slider" class="form-range" min="0" max="100" step="1" value="100" />
+            </div>
+          </div>
+
+          <!-- Devices Submenu -->
+          <div id="add-devices-submenu" class="submenu">
+
+            <!-- CCTV System Devices -->
+            <div class="device-dropdown">
+              <button class="device-dropdown-btn toggle-device-dropdown" type="button" data-bs-toggle="collapse" data-bs-target="#cctv-collapse">
+                <div class="icon-label">
+                  <img src="./images/icons/cctv-orange.svg" style="-webkit-user-drag: none" alt="CCTV System" width="24" height="24" />
+                  <span>CCTV System</span>
+                </div>
+                <img src="images/icons/expand-arrow-black.svg" class="dropdown-icon" alt="dropdown arrow" />
+              </button>
+              <div class="device-dropdown-content collapse" id="cctv-collapse">
+                <div class="device-row">
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="fixed-camera">
+                      <div class="device-icon"><img src="./images/devices/fixed-camera.png" alt="Fixed Camera"></div>
+                    </div>
+                    <div class="device-label">Fixed Camera</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="ptz-camera">
+                      <div class="device-icon"><img src="./images/devices/ptz-camera.png" alt="PTZ Camera"></div>
+                    </div>
+                    <div class="device-label">PTZ Camera</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="box-camera">
+                      <div class="device-icon"><img src="./images/devices/box-camera.png" alt="Box Camera"></div>
+                    </div>
+                    <div class="device-label">Box Camera</div>
+                  </div>
+                </div>
+                <div class="device-row">
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="dome-camera">
+                      <div class="device-icon"><img src="./images/devices/dome-camera.png" alt="Dome Camera"></div>
+                    </div>
+                    <div class="device-label">Dome Camera</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="bullet-camera">
+                      <div class="device-icon"><img src="./images/devices/bullet-camera.png" alt="Bullet Camera"></div>
+                    </div>
+                    <div class="device-label">Bullet Camera</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="thermal-camera">
+                      <div class="device-icon"><img src="./images/devices/thermal-camera.png" alt="Thermal Camera"></div>
+                    </div>
+                    <div class="device-label">Thermal Camera</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Access Control Devices -->
+            <div class="device-dropdown">
+              <button class="device-dropdown-btn toggle-device-dropdown" type="button" data-bs-toggle="collapse" data-bs-target="#access-collapse">
+                <div class="icon-label">
+                  <img src="./images/icons/access-orange.svg" style="-webkit-user-drag: none" alt="Access Control" width="24" height="24" />
+                  <span>Access Control</span>
+                </div>
+                <img src="images/icons/expand-arrow-black.svg" class="dropdown-icon" alt="dropdown arrow" />
+              </button>
+              <div class="device-dropdown-content collapse" id="access-collapse">
+                <div class="device-row">
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="access-system">
+                      <div class="device-icon"><img src="./images/devices/access-system.png" alt="Access System"></div>
+                    </div>
+                    <div class="device-label">Access System</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="door-entry">
+                      <div class="device-icon"><img src="./images/devices/door-entry.png" alt="Door Entry"></div>
+                    </div>
+                    <div class="device-label">Door Entry</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="gates">
+                      <div class="device-icon"><img src="./images/devices/gates.png" alt="Gates"></div>
+                    </div>
+                    <div class="device-label">Gates</div>
+                  </div>
+                </div>
+                <div class="device-row">
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="vehicle-entry">
+                      <div class="device-icon"><img src="./images/devices/vehicle-entry.png" alt="Vehicle Entry"></div>
+                    </div>
+                    <div class="device-label">Vehicle Entry</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="turnstiles">
+                      <div class="device-icon"><img src="./images/devices/turnstiles.png" alt="Turnstiles"></div>
+                    </div>
+                    <div class="device-label">Turnstiles</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="mobile-entry">
+                      <div class="device-icon"><img src="./images/devices/mobile-entry.png" alt="Mobile Entry"></div>
+                    </div>
+                    <div class="device-label">Mobile Entry</div>
+                  </div>
+                </div>
+                <div class="device-row">
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="pir">
+                      <div class="device-icon"><img src="./images/devices/pir-icon.png" alt="PIR"></div>
+                    </div>
+                    <div class="device-label">PIR</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="card-reader">
+                      <div class="device-icon"><img src="./images/devices/card-reader.png" alt="Card Reader"></div>
+                    </div>
+                    <div class="device-label">Card Reader</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="lock">
+                      <div class="device-icon"><img src="./images/devices/lock-icon.png" alt="Lock"></div>
+                    </div>
+                    <div class="device-label">Lock</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Intruder Detection Devices -->
+            <div class="device-dropdown">
+              <button class="device-dropdown-btn toggle-device-dropdown" type="button" data-bs-toggle="collapse" data-bs-target="#intruder-collapse">
+                <div class="icon-label">
+                  <img src="./images/icons/intruder-orange.svg" style="-webkit-user-drag: none" alt="Intruder Alarm" width="24" height="24" />
+                  <span>Intruder Detection</span>
+                </div>
+                <img src="images/icons/expand-arrow-black.svg" class="dropdown-icon" alt="dropdown arrow" />
+              </button>
+              <div class="device-dropdown-content collapse" id="intruder-collapse">
+                <div class="device-row">
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="intruder-alarm">
+                      <div class="device-icon"><img src="./images/devices/intruder-alarm.png" alt="Intruder Alarm"></div>
+                    </div>
+                    <div class="device-label">Intruder Alarm</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="panic-alarm">
+                      <div class="device-icon"><img src="./images/devices/panic-alarm.png" alt="Panic Alarm"></div>
+                    </div>
+                    <div class="device-label">Panic Alarm</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="motion-detector">
+                      <div class="device-icon"><img src="./images/devices/motion-detector.png" alt="Motion Detector"></div>
+                    </div>
+                    <div class="device-label">Motion Detector</div>
+                  </div>
+                </div>
+                <div class="device-row">
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="infrared-sensors">
+                      <div class="device-icon"><img src="./images/devices/infrared-sensors.png" alt="Infrared Sensors"></div>
+                    </div>
+                    <div class="device-label">Infrared Sensors</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="pressure-mat">
+                      <div class="device-icon"><img src="./images/devices/pressure-mat.png" alt="Pressure Mat"></div>
+                    </div>
+                    <div class="device-label">Pressure Mat</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="glass-contact">
+                      <div class="device-icon"><img src="./images/devices/glass-contact.png" alt="Glass Contact"></div>
+                    </div>
+                    <div class="device-label">Glass Contact</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Fire Evacuation Devices -->
+            <div class="device-dropdown">
+              <button class="device-dropdown-btn toggle-device-dropdown" type="button" data-bs-toggle="collapse" data-bs-target="#fire-collapse">
+                <div class="icon-label">
+                  <img src="./images/icons/fire-orange.svg" style="-webkit-user-drag: none" alt="Fire" width="24" height="24" />
+                  <span>Fire Evacuation</span>
+                </div>
+                <img src="images/icons/expand-arrow-black.svg" class="dropdown-icon" alt="dropdown arrow" />
+              </button>
+              <div class="device-dropdown-content collapse" id="fire-collapse">
+                <div class="device-row">
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="fire-alarm">
+                      <div class="device-icon"><img src="./images/devices/fire-alarm.png" alt="Fire Alarm"></div>
+                    </div>
+                    <div class="device-label">Fire Alarm</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="fire-extinguisher">
+                      <div class="device-icon"><img src="./images/devices/fire-extinguisher.png" alt="Fire Extinguisher"></div>
+                    </div>
+                    <div class="device-label">Fire Extinguisher</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="fire-blanket">
+                      <div class="device-icon"><img src="./images/devices/fire-blanket.png" alt="Fire Blanket"></div>
+                    </div>
+                    <div class="device-label">Fire Blanket</div>
+                  </div>
+                </div>
+                <div class="device-row">
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="emergency-exit">
+                      <div class="device-icon"><img src="./images/devices/emergency-exit.png" alt="Emergency Exit"></div>
+                    </div>
+                    <div class="device-label">Emergency Exit</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="assembly-point">
+                      <div class="device-icon"><img src="./images/devices/assembly-point.png" alt="Assembly Point"></div>
+                    </div>
+                    <div class="device-label">Assembly Point</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="emergency-telephone">
+                      <div class="device-icon"><img src="./images/devices/emergency-telephone.png" alt="Emergency Telephone"></div>
+                    </div>
+                    <div class="device-label">Emergency Phone</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Network Equipment Devices -->
+            <div class="device-dropdown">
+              <button class="device-dropdown-btn toggle-device-dropdown" type="button" data-bs-toggle="collapse" data-bs-target="#network-collapse">
+                <div class="icon-label">
+                  <img src="./images/icons/network-orange.svg" style="-webkit-user-drag: none" alt="Network" width="24" height="24" />
+                  <span>Network Hardware</span>
+                </div>
+                <img src="images/icons/expand-arrow-black.svg" class="dropdown-icon" alt="dropdown arrow" />
+              </button>
+              <div class="device-dropdown-content collapse" id="network-collapse">
+                <div class="device-row">
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="Series">
+                      <div class="device-icon"><img src="./images/devices/Series.png" alt="Series"></div>
+                    </div>
+                    <div class="device-label">Series</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="panel-control">
+                      <div class="device-icon"><img src="./images/devices/panel-control.png" alt="Panel Control"></div>
+                    </div>
+                    <div class="device-label">Panel Control</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="Sensor">
+                      <div class="device-icon"><img src="./images/devices/Sensor.png" alt="Sensor"></div>
+                    </div>
+                    <div class="device-label">Sensor</div>
+                  </div>
+                </div>
+
+                <div class="device-row">
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="interface-unit">
+                      <div class="device-icon"><img src="./images/devices/interface-unit.png" alt="Interface Unit"></div>
+                    </div>
+                    <div class="device-label">Interface Unit</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="access-panel">
+                      <div class="device-icon"><img src="./images/devices/access-panel.png" alt="Access Panel"></div>
+                    </div>
+                    <div class="device-label">Access Panel</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="expander-connection">
+                      <div class="device-icon"><img src="./images/devices/expander-connection.png" alt="Expander Connection"></div>
+                    </div>
+                    <div class="device-label">Expander Connection</div>
+                  </div>
+                  </div>
+
+                <div class="device-row">
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="dvr">
+                      <div class="device-icon"><img src="./images/devices/dvr.png" alt="DVR"></div>
+                    </div>
+                    <div class="device-label">DVR</div>
+                  </div>
+                  <div class="device-wrapper">
+                    <div class="device-item" draggable="true" data-device="nvr">
+                      <div class="device-icon"><img src="./images/devices/nvr.png" alt="NVR"></div>
+                    </div>
+                    <div class="device-label">NVR</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <!-- Custom Icons -->
+            <div class="device-dropdown">
+              <button class="device-dropdown-btn toggle-device-dropdown" type="button" data-bs-toggle="collapse" data-bs-target="#custom-icons-collapse">
+                <div class="icon-label">
+                  <img src="./images/icons/upload-orange.svg" alt="Upload Files Icon" width="24" height="24" />
+                  <span>Custom Icons</span>
+                </div>
+                <img src="images/icons/expand-arrow-black.svg" class="dropdown-icon" alt="dropdown arrow" />
+              </button>
+              <div class="device-dropdown-content collapse" id="custom-icons-collapse">
+                <div class="p-2 d-flex align-items-center justify-content-start gap-2">
+                  <button id="add-custom-icon-btn" class="btn btn-sm w-100">Add Custom Icon</button>
+                </div>
+                <div id="custom-icons-list">
+                  <!-- Custom icons populated by JS -->
+                </div>
+              </div>
+            </div>
+
+            <!-- Placeholder Text -->
+            <div class="device-dropdown">
+              <button class="device-dropdown-btn toggle-device-dropdown" type="button" data-bs-toggle="collapse" data-bs-target="#text-devices-collapse">
+                <div class="icon-label">
+                  <img src="./images/icons/text-devices-orange.svg" alt="Placeholder Text Icon" width="24" height="24" />
+                  <span>Placeholder Text</span>
+                </div>
+                <img src="images/icons/expand-arrow-black.svg" class="dropdown-icon" alt="dropdown arrow" />
+              </button>
+              <div class="device-dropdown-content collapse" id="text-devices-collapse">
+                <div class="p-2 d-flex align-items-center justify-content-start gap-2">
+                  <button id="add-text-device-btn" class="btn btn-sm w-100">Add Placeholder Text</button>
+                </div>
+                <div id="text-devices-list">
+                  <!-- Placeholder text entries populated by JS -->
+                </div>
+              </div>
+            </div>
+
+            
+          </div>
+
+          <!-- Drawing Tools Submenu -->
+          <div id="drawing-tools-submenu" class="submenu">
+            <h5 class="drawing-tools-section-title" style="margin-top: 0px">Main Tools</h5>
+            <div class="tools-grid">
+              <div class="tool-item" data-tool="create-zones" id="create-zone-btn">
+                <div class="tool-icon"><img src="./images/icons/zones.svg" alt="Zones Icon" /></div>
+                <div class="tool-label">Zones</div>
+              </div>
+
+              <div class="tool-item" data-tool="create-rooms" id="create-room-btn">
+                <div class="tool-icon"><img src="./images/icons/rooms.svg" alt="Rooms Icon" /></div>
+                <div class="tool-label">Rooms</div>
+              </div>
+
+              <div class="tool-item" data-tool="measurement" id="measure-btn">
+                <div class="tool-icon"><img src="./images/icons/measurement.svg" alt="Measurement Icon" /></div>
+                <div class="tool-label">Measure</div>
+              </div>
+
+              <div class="tool-item" data-tool="measure-apex" id="apex-btn">
+                <div class="tool-icon"><img src="./images/icons/apex.svg" alt="Apex Icon" /></div>
+                <div class="tool-label">Apex</div>
+              </div>
+
+              <div class="tool-item" data-tool="wall-boundaries" id="add-wall-btn">
+                <div class="tool-icon"><img src="./images/icons/wall-boundaries.svg" alt="Wall Boundaries Icon" /></div>
+                <div class="tool-label">Walls</div>
+              </div>
+
+              <div class="tool-item" data-tool="network-link" id="network-link-btn">
+                <div class="tool-icon"><img src="./images/icons/network-link.svg" alt="Network Link Icon" /></div>
+                <div class="tool-label">Network Link</div>
+              </div>
+
+              <div class="tool-item" data-tool="title-block" id="titleblock-btn">
+                <div class="tool-icon"><img src="./images/icons/horizontal-titleblock.svg" alt="Title Block Icon" /></div>
+                <div class="tool-label">Title Block</div>
+              </div>
+
+              <div class="tool-item" data-tool="upload-image" id="upload-image-btn">
+                <div class="tool-icon"><img src="./images/icons/upload-image.svg" alt="Upload Image Icon" /></div>
+                <div class="tool-label">Upload Image</div>
+              </div>
+
+            </div>
+
+            <h5 class="drawing-tools-section-title">Shapes</h5>
+            <div class="tools-grid">
+              <div class="tool-item" data-tool="add-text" id="add-text-btn">
+                <div class="tool-icon"><img src="./images/icons/text.svg" alt="Text Icon" /></div>
+                <div class="tool-label">Text</div>
+              </div>
+
+              <div class="tool-item" data-tool="add-square" id="add-square-btn">
+                <div class="tool-icon"><img src="./images/icons/square.svg" alt="Square Icon" /></div>
+                <div class="tool-label">Square</div>
+              </div>
+
+              <div class="tool-item" data-tool="add-circle" id="add-circle-btn">
+                <div class="tool-icon"><img src="./images/icons/circle.svg" alt="Circle Icon" /></div>
+                <div class="tool-label">Circle</div>
+              </div>
+
+              <div class="tool-item" data-tool="add-line" id="add-line-btn">
+                <div class="tool-icon"><img src="./images/icons/line.svg" alt="Line Icon" /></div>
+                <div class="tool-label">Line</div>
+              </div>
+
+              <div class="tool-item" data-tool="add-arrow" id="add-arrow-btn">
+                <div class="tool-icon"><img src="./images/icons/arrow.svg" alt="Arrow Icon" /></div>
+                <div class="tool-label">Arrow</div>
+              </div>
+
+              <div class="tool-item" data-tool="add-connection" id="add-connection-btn">
+                <div class="tool-icon"><img src="./images/icons/connection.svg" alt="Connection Icon" /></div>
+                <div class="tool-label">Connection</div>
+              </div>
+
+              <div class="tool-item" data-tool="north-arrow" id="north-arrow-btn">
+                <div class="tool-icon"><img src="./images/icons/north-arrow.svg" alt="North Arrow Icon" /></div>
+                <div class="tool-label">North Arrow</div>
+              </div>
+
+              <div class="tool-item" data-tool="building-front" id="add-buildingfront-btn">
+                <div class="tool-icon"><img src="./images/icons/buildingfront.svg" alt="Building Icon" /></div>
+                <div class="tool-label">Building Front</div>
+              </div>
+
+            </div>
+
+            <div class="color-section">
+              <h5 class="drawing-tools-section-title">Colour</h5>
+              <div class="color-grid drawing-main-colour">
+                <div class="colour-icon" data-color="#f8794b" style="background-color: #f8794b;"></div>
+                <div class="colour-icon" data-color="#007bff" style="background-color: #007bff;"></div>
+                <div class="colour-icon" data-color="#28a745" style="background-color: #28a745;"></div>
+                <div class="colour-icon" data-color="#ffc107" style="background-color: #ffc107;"></div>
+                <div class="colour-icon" data-color="#dc3545" style="background-color: #dc3545;"></div>
+                <label class="colour-picker-icon">
+                  <input type="color" id="shapes-text-color-picker"/>
+                  <span>🎨</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="color-section">
+              <h5 class="drawing-tools-section-title">Text Colour</h5>
+              <div class="color-grid drawing-text-colour">
+                <div class="colour-icon" data-color="#000000" style="background-color: #000000;"></div>
+                <div class="colour-icon" data-color="#48bfe3" style="background-color: #48bfe3;"></div>
+                <div class="colour-icon" data-color="#74c69d" style="background-color: #74c69d;"></div>
+                <div class="colour-icon" data-color="#cdb4db" style="background-color: #cdb4db;"></div>
+                <div class="colour-icon" data-color="#ff6f42" style="background-color: #ff6f42;"></div>
+                <label class="colour-picker-icon">
+                  <input type="color" id="drawing-text-color-picker"/>
+                  <span>🎨</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="color-section">
+              <h5 class="drawing-tools-section-title">Text Background Colour</h5>
+              <div class="color-grid drawing-text-background-colour">
+                <div class="colour-icon" data-color="#ffffff" style="background-color: #ffffff;"></div>
+                <div class="colour-icon" data-color="#dcdfe2" style="background-color: #dcdfe2;"></div>
+                <div class="colour-icon" data-color="#c9ced3" style="background-color: #c9ced3;"></div>
+                <div class="colour-icon" data-color="#ced4da" style="background-color: #ced4da;"></div>
+                <div class="colour-icon" data-color="#000000" style="background-color: #000000;"></div>
+                <label class="colour-picker-icon">
+                  <input type="color" id="drawing-text-background-color-picker"/>
+                  <span>🎨</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="size-section">
+              <h5 class="drawing-tools-section-title">Text Size & Style</h5>
+              <div class="size-grid d-flex align-items-center p-2 rounded mt-2 bg-light gap-2">
+                <select id="text-size-dropdown">
+                  <option value="" disabled selected>Select</option>
+                  <option value="14">Small</option>
+                  <option value="18">Medium</option>
+                  <option value="24">Large</option>
+                  <option value="32">X-Large</option>
+                </select>
+                <button id="bold-toggle-btn">B</button>
+                <button id="italic-toggle-btn">I</button>
+              </div>
+            </div>
+          </div>
+
+          <!-- Client Details Submenu -->
+          <div id="client-details-submenu" class="submenu">
+            <span>Report Date:</span>
+            <input type="date" id="client-date-input" class="client-details-input" />
+            <span>Client Name:</span>
+            <textarea class="client-details-input" id="client-name-test-input" maxlength="148"></textarea>
+            <span>Client Address:</span>
+            <textarea class="client-details-input" id="address-input" maxlength="148"></textarea>
+            <span>Report Title:</span>
+            <textarea class="client-details-input" id="report-title-input" maxlength="148"></textarea>
+            <span>Rev 1:</span>
+            <textarea class="client-details-input" id="rev-one-input" maxlength="148"></textarea>
+            <span>Rev 2:</span>
+            <textarea class="client-details-input" id="rev-two-input" maxlength="148"></textarea>
+            <span>Rev 3:</span>
+            <textarea class="client-details-input" id="rev-three-input" maxlength="148"></textarea>
+            <button class="submenu-button" id="client-logo-test-input" style="margin: 10px 0 16px 0">
+              <div class="icon-label">
+                <img src="./images/icons/client-logo.svg" alt="Client Logo Icon" />
+                <span>Client Logo</span>
+              </div>
+            </button>
+
+            <input type="file" id="client-logo-upload" accept="image/*" style="display: none" />
+            <div id="client-logo-preview" class="logo-preview"><span style="color: #999">No logo selected</span></div>
+          </div>
+
+          <!-- Settings Submenu -->
+          <div id="settings-submenu" class="submenu">
+            <!-- Device Snapping -->
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="snap-device-toggle" />
+                <label class="form-check-label" for="snap-device-toggle">Device Snapping Off</label>
+              </div>
+            </div>
+
+            <!-- Canvas Zoom Controls -->
+            <div class="mb-3">
+              <span class="form-label">Canvas Zoom:</span>
+              <div class="d-flex align-items-center gap-2 w-100">
+                <button id="zoom-out-btn" class="btn btn-sm flex-shrink-0" type="button">-</button>
+                <div id="zoom-percentage" class="flex-grow-1 text-center bg-light text-dark rounded px-3 py-2" style="font-weight: 500; font-size: 16px;">100%</div>
+                <button id="zoom-in-btn" class="btn btn-sm flex-shrink-0" type="button">+</button>
+              </div>
+            </div>
+
+            <!-- Global Icon Size -->
+            <div class="mb-3">
+              <label for="global-icon-size-slider" class="form-label">Global Icon Size (px):</label>
+              <div class="slider-group">
+                <input type="range" class="form-range flex-grow-1 slider" id="global-icon-size-slider" min="1" max="100" step="1" value="30" />
+                <span id="global-icon-size-input" class="slider-value">30px</span>
+              </div>
+            </div>
+
+            <!-- Global Icon Text Toggle -->
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="global-icon-text-toggle" checked />
+                <label class="form-check-label" for="global-icon-text-toggle">Show Icon Text</label>
+              </div>
+            </div>
+
+            <!-- Global Label Drag Toggle -->
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="global-label-drag-toggle" />
+                <label class="form-check-label" for="global-label-drag-toggle">Allow Label Dragging</label>
+              </div>
+            </div>
+
+            <!-- Global Device Color -->
+            <div class="mb-3">
+              <span class="form-label">Global Device Color:</span>
+              <div class="color-grid global-device-colour">
+                <div class="colour-icon" data-color="#f8794b" style="background-color: #f8794b;"></div>
+                <div class="colour-icon" data-color="#00ffff" style="background-color: #00ffff;"></div>
+                <div class="colour-icon" data-color="#fe0000" style="background-color: #fe0000;"></div>
+                <div class="colour-icon" data-color="#66ff00" style="background-color: #66ff00;"></div>
+                <div class="colour-icon" data-color="#ff00ff" style="background-color: #ff00ff;"></div>
+                <label class="colour-picker-icon">
+                  <input type="color" id="global-device-color-picker"/>
+                  <span>🎨</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Global Text Color -->
+            <div class="mb-3">
+              <span class="form-label">Global Text Color:</span>
+              <div class="color-grid global-text-colour">
+                <div class="colour-icon" data-color="#000000" style="background-color: #000000;"></div>
+                <div class="colour-icon" data-color="#48bfe3" style="background-color: #48bfe3;"></div>
+                <div class="colour-icon" data-color="#74c69d" style="background-color: #74c69d;"></div>
+                <div class="colour-icon" data-color="#ffbe0b" style="background-color: #ffbe0b;"></div>
+                <div class="colour-icon" data-color="#ff6f42" style="background-color: #ff6f42;"></div>
+                <label class="colour-picker-icon">
+                  <input type="color" id="global-text-color-picker"/>
+                  <span>🎨</span>
+                </label>
+              </div>
+            </div>
+
+            <!-- Global Font Selection -->
+            <div class="mb-3">
+              <label for="global-font-select" class="form-label">Global Font:</label>
+              <select class="form-control form-control-sm" id="global-font-select">
+                <option value="Poppins, sans-serif">Poppins (Default)</option>
+                <option value="Arial, sans-serif">Arial</option>
+                <option value="Helvetica, sans-serif">Helvetica</option>
+                <option value="Times New Roman, serif">Times New Roman</option>
+                <option value="Georgia, serif">Georgia</option>
+                <option value="Verdana, sans-serif">Verdana</option>
+                <option value="Calibri, sans-serif">Calibri</option>
+              </select>
+            </div>
+
+            <!-- Global Text Background Toggle -->
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="global-text-background-toggle" checked />
+                <label class="form-check-label" for="global-text-background-toggle">Show Text Background</label>
+              </div>
+            </div>
+
+            <!-- Global Bold Text Toggle -->
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="global-bold-text-toggle" />
+                <label class="form-check-label" for="global-bold-text-toggle">Bold Text</label>
+              </div>
+            </div>
+
+            <!-- Complete Device Indicator Toggle -->
+            <div class="mb-3">
+              <div class="form-check">
+                <input class="form-check-input" type="checkbox" id="global-complete-device-indicator-toggle" checked />
+                <label class="form-check-label" for="global-complete-device-indicator-toggle">Show Complete Device Indicator</label>
+              </div>
+            </div>
+
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Clear Warning Popup -->
+      <div id="clear-warning-popup" class="modal" tabindex="-1">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content bg-secondary text-black">
+            <div class="modal-header bg-orange text-white">
+              <h5 class="modal-title bg-orange text-white">Clear Canvas</h5>
+              <button id="close-clear-warning" type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-white">
+              <p>WARNING: This will completely clear the canvas.</p>
+            </div>
+            <div class="modal-footer bg-white">
+              <button id="cancel-clear-warning" type="button" class="btn text-white" data-bs-dismiss="modal">Close</button>
+              <button id="confirm-clear-warning" type="button" class="btn text-white">Confirm</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Drawing Mode Popup -->
+      <div id="drawing-mode-popup">
+        <div class="drawing-mode-container">
+          <label>Drawing Mode <button id="drawing-esc-btn">ESC</button> to exit</label>
+        </div>
+      </div>
+
+      <!-- Select Background Modal -->
+      <div class="modal custom-modal" id="customModal" tabindex="-1" aria-labelledby="customModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="modal-header-content">
+                <div class="modal-header-left">
+                  <h1 class="modal-title fs-4" id="customModalLabel">Background Selection</h1>
+                </div>
+                <div class="modal-header-center">
+                  <div class="background-steps">
+                    <span class="step active">1</span>
+                    <span>Source</span>
+                  </div>
+                  <div class="background-steps">
+                    <span class="step">2</span>
+                    <span>Crop</span>
+                  </div>
+                  <div class="background-steps">
+                    <span class="step">3</span>
+                    <span>Scale</span>
+                  </div>
+                </div>
+                <div class="modal-header-right nav-buttons">
+                  <button class="modal-header-btn disabled-btn">
+                    <div class="icon-label">
+                      <img src="images/icons/back-black-arrow.svg" alt="Back Arrow Icon" />
+                      <span>Back</span>
+                    </div>
+                  </button>
+                  <button class="modal-header-btn disabled-btn">
+                    <div class="icon-label">
+                      <span>Next</span>
+                      <img src="images/icons/forward-black-arrow.svg" alt="Next Arrow Icon" />
+                    </div>
+                  </button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="split-container">
+                <!-- Left Panel -->
+                <div class="left-panel">
+                  <!-- Upload Image Section -->
+                  <div id="upload-file-btn" class="upload-section" style="cursor: pointer">
+                    <div class="image-container">
+                      <img src="images/content/upload-image-preview.png" alt="Upload Image Preview" draggable="false" />
+                    </div>
+                    <div class="options-content">
+                      <h3>Upload Image</h3>
+                      <p>Upload JPG or PNG images. Choose from your device and customize your project.</p>
+                    </div>
+                  </div>
+
+                  <!-- Upload PDF Section -->
+                  <div id="upload-pdf-btn" class="upload-section" style="cursor: pointer">
+                    <div class="image-container">
+                      <img src="images/content/upload-pdf-preview.png" alt="Upload PDF Preview" draggable="false" />
+                    </div>
+                    <div class="options-content">
+                      <h3>Upload PDF</h3>
+                      <p>Upload PDF files and convert them to images for your background.</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Right Panel -->
+                <div class="right-panel">
+                  <!-- Google Maps Section -->
+                  <div id="google-maps-btn" class="upload-section" style="cursor: pointer">
+                    <div class="image-container">
+                      <img src="images/content/google-maps-preview.png" alt="Google Maps Preview" draggable="false" />
+                    </div>
+                    <div class="options-content">
+                      <h3>Google Maps</h3>
+                      <p>Get high-resolution satellite and aerial imagery for locations worldwide.</p>
+                    </div>
+                  </div>
+
+                  <!-- Custom Style Section -->
+                  <div id="custom-style-btn" class="upload-section" style="cursor: pointer">
+                    <div class="image-container">
+                      <img src="images/content/custom-style-preview.png" alt="Custom Style Preview" draggable="false" />
+                    </div>
+                    <div class="options-content">
+                      <h3>Custom Style</h3>
+                      <p>Create a unique background with personalized colors, patterns, and designs.</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Google Maps Modal -->
+      <div class="modal custom-modal" id="mapModal" tabindex="-1" aria-labelledby="mapModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="modal-header-content">
+                <div class="modal-header-left">
+                  <h1 class="modal-title fs-4" id="mapModalLabel">Maps Satellite</h1>
+                </div>
+                <div class="modal-header-center">
+                  <div class="background-steps">
+                    <span class="step active">1</span>
+                    <span>Source</span>
+                  </div>
+                  <div class="background-steps">
+                    <span class="step">2</span>
+                    <span>Crop</span>
+                  </div>
+                  <div class="background-steps">
+                    <span class="step">3</span>
+                    <span>Scale</span>
+                  </div>
+                </div>
+                <div class="modal-header-right nav-buttons">
+                  <button id="map-back-btn" class="modal-header-btn">
+                    <div class="icon-label">
+                      <img src="images/icons/back-black-arrow.svg" alt="Back Arrow" />
+                      <span>Back</span>
+                    </div>
+                  </button>
+                  <button id="map-next-btn" class="modal-header-btn">
+                    <div class="icon-label">
+                      <span>Next</span>
+                      <img src="images/icons/forward-black-arrow.svg" alt="Next Arrow" />
+                    </div>
+                  </button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="map-container">
+                <form id="address-form">
+                  <input type="text" id="maps-address-input" placeholder="Enter address, building name or postcode..." />
+                </form>
+                <div id="google-maps-container">
+                  <div id="map"></div>
+                  <!-- Capture shape controls -->
+                  <div id="map-capture-controls">
+                    <div class="btn-toggle-group" role="group" aria-label="Capture shape">
+                      <button type="button" id="shape-square-btn" class="toggle-btn active">Square</button>
+                      <button type="button" id="shape-rect-btn" class="toggle-btn">Rectangle</button>
+                    </div>
+                  </div>
+                  <!-- Square Capture Overlay -->
+                  <div id="map-capture-overlay">
+                    <div class="capture-frame square">
+                      <div class="capture-label">Capture Area</div>
+                      <div class="capture-corners"></div>
+                    </div>
+                  </div>
+                  <!-- Center crosshair for precise positioning -->
+                  <div id="map-center-cross">
+                    <div class="horizontal-line"></div>
+                    <div class="vertical-line"></div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Custom Styles Modal -->
+      <div class="modal custom-modal" id="customBackgroundModal" tabindex="-1" aria-labelledby="customBackgroundModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="modal-header-content">
+                <div class="modal-header-left">
+                  <h1 class="modal-title fs-4" id="customBackgroundModalLabel">Custom Styles</h1>
+                </div>
+                <div class="modal-header-center">
+                  <div class="background-steps">
+                    <span class="step active">1</span>
+                    <span>Source</span>
+                  </div>
+                  <div class="background-steps">
+                    <span class="step">2</span>
+                    <span>Crop</span>
+                  </div>
+                  <div class="background-steps">
+                    <span class="step">3</span>
+                    <span>Scale</span>
+                  </div>
+                </div>
+                <div class="modal-header-right nav-buttons">
+                  <button id="custom-back-btn" class="modal-header-btn">
+                    <div class="icon-label">
+                      <img src="images/icons/back-black-arrow.svg" alt="Back Arrow" />
+                      <span>Back</span>
+                    </div>
+                  </button>
+                  <button id="custom-next-btn" class="modal-header-btn">
+                    <div class="icon-label">
+                      <span>Next</span>
+                      <img src="images/icons/forward-black-arrow.svg" alt="Next Arrow" />
+                    </div>
+                  </button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="custom-container">
+                <div class="custom-controls">
+                  <div class="inputs-container">
+                    <div class="input-group">
+                      <label for="custom-width" class="custom-label">Width (pixels):</label>
+                      <input type="number" id="custom-width" min="500" max="1920" value="1920" placeholder="500-1920" />
+                    </div>
+
+                    <div class="input-group">
+                      <label for="custom-height" class="custom-label">Height (pixels):</label>
+                      <input type="number" id="custom-height" min="250" max="1920" value="1000" placeholder="250-1920" />
+                    </div>
+
+                    <div class="input-group">
+                      <label for="custom-colour" class="custom-label">Background Color:</label>
+                      <select id="custom-colour">
+                        <option value="#16C47F">Green</option>
+                        <option value="#0000FF">Blue</option>
+                        <option value="#FFF085">Yellow</option>
+                        <option value="#F564A9">Pink</option>
+                        <option value="#DA6C6C">Red</option>
+                        <option value="#292929">Black</option>
+                        <option value="#FFFFFF">White</option>
+                      </select>
+                    </div>
+                  </div>
+                </div>
+                <div class="custom-preview">
+                  <div id="custom-style-container">
+                    <canvas id="custom-preview-canvas"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Crop Background Modal -->
+      <div class="modal custom-modal" id="cropModal" tabindex="-1" aria-labelledby="cropModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="modal-header-content">
+                <div class="modal-header-left">
+                  <h1 class="modal-title fs-4" id="cropModalLabel">Crop Background</h1>
+                </div>
+                <div class="modal-header-center">
+                  <div class="background-steps">
+                    <span class="step finish">1</span>
+                    <span>Source</span>
+                  </div>
+                  <div class="background-steps">
+                    <span class="step active">2</span>
+                    <span>Crop</span>
+                  </div>
+                  <div class="background-steps">
+                    <span class="step">3</span>
+                    <span>Scale</span>
+                  </div>
+                </div>
+                <div class="modal-header-right nav-buttons">
+                  <button id="crop-back-btn" class="modal-header-btn">
+                    <div class="icon-label">
+                      <img src="images/icons/back-black-arrow.svg" alt="Back Arrow" />
+                      <span>Back</span>
+                    </div>
+                  </button>
+                  <button id="crop-next-btn" class="modal-header-btn">
+                    <div class="icon-label">
+                      <span>Next</span>
+                      <img src="images/icons/forward-black-arrow.svg" alt="Next Arrow" />
+                    </div>
+                  </button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="crop-container">
+                <div id="crop-result-container">
+                  <img id="croppable-image" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Scale Background Modal -->
+      <div class="modal custom-modal" id="scaleModal" tabindex="-1" aria-labelledby="scaleModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="modal-header-content">
+                <div class="modal-header-left">
+                  <h1 class="modal-title fs-4" id="scaleModalLabel">Set Scale</h1>
+                </div>
+                <div class="modal-header-center">
+                  <div class="background-steps">
+                    <span class="step finish">1</span>
+                    <span>Source</span>
+                  </div>
+                  <div class="background-steps">
+                    <span class="step finish">2</span>
+                    <span>Crop</span>
+                  </div>
+                  <div class="background-steps">
+                    <span class="step active">3</span>
+                    <span>Scale</span>
+                  </div>
+                </div>
+                <div class="modal-header-right nav-buttons">
+                  <button id="scale-back-btn" class="modal-header-btn">
+                    <div class="icon-label">
+                      <img src="images/icons/back-black-arrow.svg" alt="Back Arrow" />
+                      <span>Back</span>
+                    </div>
+                  </button>
+                  <button id="finish-scale-btn" class="modal-header-btn">
+                    <div class="icon-label">
+                      <span>Finish</span>
+                      <img src="images/icons/finish-black.svg" alt="Finish Icon" />
+                    </div>
+                  </button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="scale-container">
+                <div class="scale-controls">
+                  <div class="inputs-container">
+                    <div class="input-group">
+                      <label for="scale-distance-input" class="custom-label">Distance (meters):</label>
+                      <input type="number" id="scale-distance-input" min="0.1" max="10000" step="0.1" value="50" placeholder="Enter distance" />
+                    </div>
+                  </div>
+                </div>
+                <div class="scale-preview">
+                  <div id="scale-result-container">
+                    <canvas id="scaleCanvas"></canvas>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Screenshot Modal -->
+      <div class="modal custom-modal" id="cropScreenshotModal" tabindex="-1" aria-labelledby="cropScreenshotModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="modal-header-content">
+                <div class="modal-header-left">
+                  <h1 class="modal-title fs-4" id="screenshotModalLabel">Capture Screenshot</h1>
+                </div>
+                <div class="modal-header-right nav-buttons">
+                  <button id="crop-confirm-screenshot-btn" class="modal-header-btn">
+                    <div class="icon-label">
+                      <span>Confirm</span>
+                      <img src="./images/icons/finish-black.svg" alt="Confirm Icon" />
+                    </div>
+                  </button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-body">
+              <div class="crop-container">
+                <div id="crop-screenshot-result-container">
+                  <img id="crop-screenshot-preview" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Takeoff Modal -->
+      <div class="modal fade custom-modal" id="takeoff-modal" tabindex="-1" aria-labelledby="takeoffModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="modal-header-content" style="width:100%; display:flex; align-items:center; gap:8px;">
+                <div class="modal-header-left" style="flex:1;">
+                  <h1 class="modal-title fs-5" id="takeoffModalLabel" style="margin:0;">Device Takeoff List</h1>
+                </div>
+                <div class="modal-header-right nav-buttons" style="flex:1; justify-content:flex-end;">
+                  <button id="export-takeoff-csv" class="modal-header-btn">
+                    <div class="icon-label">
+                      <img src="images/icons/download-black.svg" alt="Download Icon" />
+                      <span>Export CSV</span>
+                    </div>
+                  </button>
+                  <button id="print-takeoff" class="modal-header-btn">
+                    <div class="icon-label">
+                      <img src="images/icons/print-black.svg" alt="Print Icon" />
+                      <span>Print List</span>
+                    </div>
+                  </button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-body">
+              <!-- Survey Information Section -->
+              <div class="card mb-3" id="survey-information-card">
+                <div class="card-body">
+                  <h5 class="card-title mb-3">Survey Information</h5>
+                  <div class="row g-3">
+                    <div class="col-12 col-md-6">
+                      <label for="takeoff-grading" class="form-label">Grading</label>
+                      <textarea id="takeoff-grading" class="form-control survey-textarea" rows="1" placeholder="Enter grading..."></textarea>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label for="takeoff-monitoring" class="form-label">Monitoring</label>
+                      <textarea id="takeoff-monitoring" class="form-control survey-textarea" rows="1" placeholder="Enter monitoring..."></textarea>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label for="takeoff-general-description" class="form-label">General Description</label>
+                      <textarea id="takeoff-general-description" class="form-control survey-textarea" rows="1" placeholder="Enter general description..."></textarea>
+                    </div>
+                    <div class="col-12 col-md-6">
+                      <label for="takeoff-equipment-required" class="form-label">Equipment Required</label>
+                      <textarea id="takeoff-equipment-required" class="form-control survey-textarea" rows="1" placeholder="Enter equipment required..."></textarea>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              <div id="takeoff-summary-cards"></div>
+              <div id="takeoff-table-container"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Topology Builder Modal -->
+      <div class="modal fade custom-modal" id="topologyModal" tabindex="-1" aria-labelledby="topologyModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-xl">
+          <div class="modal-content">
+            <div class="modal-header">
+              <div class="modal-header-content" style="width:100%; display:flex; align-items:center; gap:8px;">
+                <div class="modal-header-left" style="flex:1;">
+                  <h1 class="modal-title fs-5" id="topologyModalLabel" style="margin:0;">Topology Map</h1>
+                </div>
+                <div class="modal-header-right nav-buttons" style="flex:1; justify-content:flex-end; display:flex; gap:8px;">
+                  <button id="topology-autolayout" class="modal-header-btn">
+                    <div class="icon-label">
+                      <img src="images/icons/auto-layout-black.svg" alt="Auto Layout Icon" />
+                      <span>Auto layout</span>
+                    </div>
+                  </button>
+                  <button id="topology-add-screenshot" class="modal-header-btn">
+                    <div class="icon-label">
+                      <img src="images/icons/screenshot-black.svg" alt="Add Screenshot Icon" />
+                      <span>Add Screenshot</span>
+                    </div>
+                  </button>
+                  <button id="topology-print" class="modal-header-btn">
+                    <div class="icon-label">
+                      <img src="images/icons/print-black.svg" alt="Print Icon" />
+                      <span>Print</span>
+                    </div>
+                  </button>
+                  <button id="topology-download" class="modal-header-btn">
+                    <div class="icon-label">
+                      <img src="images/icons/download-black.svg" alt="Download Icon" />
+                      <span>Download</span>
+                    </div>
+                  </button>
+                  <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+              </div>
+            </div>
+            <div class="modal-body" style="height:70vh; display:flex;">
+              <div id="topology-canvas-wrapper" style="flex:1; border:1px solid #ddd; border-radius:6px; overflow:hidden; position:relative; background:#fff;">
+                <canvas id="topology-canvas"></canvas>
+                
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      
+      <!-- Custom Icon Modal -->
+      <div id="custom-icon-modal" class="modal" tabindex="-1" aria-labelledby="customIconModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content bg-secondary text-black">
+            <div class="modal-header bg-orange text-white">
+              <h5 class="modal-title bg-orange text-white" id="customIconModalLabel">Add Custom Icon</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-white">
+              <div class="mb-3">
+                <label class="form-label" for="custom-icon-file">Icon Image (PNG/JPG):</label>
+                <input type="file" id="custom-icon-file" class="form-control bg-grey" accept="image/png,image/jpeg" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="custom-icon-name">Name:</label>
+                <input type="text" id="custom-icon-name" class="form-control bg-grey" placeholder="e.g. External Siren" />
+              </div>
+              <div class="mb-3">
+                <span class="form-label">Add to Sections:</span>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="custom-icon-cctv" />
+                  <label class="form-check-label" for="custom-icon-cctv">CCTV System</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="custom-icon-access" />
+                  <label class="form-check-label" for="custom-icon-access">Access Control</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="custom-icon-intruder" />
+                  <label class="form-check-label" for="custom-icon-intruder">Intruder Detection</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="custom-icon-fire" />
+                  <label class="form-check-label" for="custom-icon-fire">Fire Evacuation</label>
+                </div>
+                <div class="form-check">
+                  <input class="form-check-input" type="checkbox" id="custom-icon-custom" checked />
+                  <label class="form-check-label" for="custom-icon-custom">Custom Icons</label>
+                </div>
+              </div>
+              <div class="form-check mb-0">
+                <input class="form-check-input" type="checkbox" id="custom-icon-is-camera" />
+                <label class="form-check-label" for="custom-icon-is-camera">This is a camera (adds coverage)</label>
+              </div>
+            </div>
+            <div class="modal-footer bg-white">
+              <button type="button" class="btn text-white bg-orange" data-bs-dismiss="modal">Close</button>
+              <button type="button" id="save-custom-icon-btn" class="btn text-white bg-orange">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+  <!-- Placeholder Text Modal -->
+      <div id="text-device-modal" class="modal" tabindex="-1" aria-labelledby="textDeviceModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content bg-secondary text-black">
+            <div class="modal-header bg-orange text-white">
+              <h5 class="modal-title bg-orange text-white" id="textDeviceModalLabel">Add Placeholder Text</h5>
+              <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body bg-white">
+              <div class="mb-3">
+                <label class="form-label" for="text-device-text">Device Text:</label>
+                <input type="text" id="text-device-text" class="form-control bg-grey" placeholder="e.g. PIR, CNCT" maxlength="20" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="text-device-name">Device Name:</label>
+                <input type="text" id="text-device-name" class="form-control bg-grey" placeholder="e.g. Motion Sensor" maxlength="50" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="text-device-shape">Shape:</label>
+                <select class="form-control bg-grey" id="text-device-shape">
+                  <option value="rectangle">Rectangle</option>
+                  <option value="circle">Circle</option>
+                  <option value="none">None (Text Only)</option>
+                </select>
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="text-device-bg-color">Background Color:</label>
+                <input type="color" id="text-device-bg-color" class="form-control bg-grey" value="#f8794b" style="height: 50px;" />
+              </div>
+              <div class="mb-3">
+                <label class="form-label" for="text-device-text-color">Text Color:</label>
+                <input type="color" id="text-device-text-color" class="form-control bg-grey" value="#ffffff" style="height: 50px;" />
+              </div>
+            </div>
+            <div class="modal-footer bg-white">
+              <button type="button" class="btn text-white bg-orange" data-bs-dismiss="modal">Close</button>
+              <button type="button" id="save-text-device-btn" class="btn text-white bg-orange">Save</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Device Properties Popover -->
+      <div class="property-popover" id="device-popover" style="display: none">
+        <div class="popover-arrow"></div>
+        <div class="popover-header">
+          <span id="device-popover-title">Device Properties</span>
+          <button id="device-popover-close" style="background: none; border: none; color: white; cursor: pointer; font-size: 18px">×</button>
+        </div>
+
+        <div class="panel-navigation">
+          <div class="nav-item active" data-panel="details">Details</div>
+          <div class="nav-item" data-panel="spec">Spec</div>
+          <div class="nav-item" data-panel="coverage">Coverage</div>
+          <div class="nav-item" data-panel="style">Style</div>
+        </div>
+
+        <div class="sliding-panels">
+          <!-- Panel: Details -->
+          <div class="slide-panel active" data-panel="details">
+            <div id="device-details-panel">
+              <div class="form-group">
+                <label for="device-label-input" class="form-label">Device Name:</label>
+                <input type="text" class="form-control form-control-sm" id="device-label-input" placeholder="Enter device name" />
+              </div>
+
+              <div class="form-group">
+                <label for="fitting-positions" class="form-label">Mounted:</label>
+                <select class="form-control form-control-sm" id="fitting-positions">
+                  <option>Select</option>
+                  <option value="top-left">Top Left</option>
+                  <option value="top-center">Top Center</option>
+                  <option value="top-right">Top Right</option>
+                  <option value="right-center">Right Center</option>
+                  <option value="bottom-right">Bottom Right</option>
+                  <option value="bottom-center">Bottom Center</option>
+                  <option value="bottom-left">Bottom Left</option>
+                  <option value="left-center">Left Center</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="device-location-input" class="form-label">Device Location:</label>
+                <input type="text" class="form-control form-control-sm" id="device-location-input" placeholder="Enter Location" />
+              </div>
+
+              <div class="form-group">
+                <label for="device-part-number-input" class="form-label">Part Number:</label>
+                <input type="text" class="form-control form-control-sm" id="device-part-number-input" placeholder="Enter Part Number" />
+              </div>
+
+              <div class="form-group">
+                <label for="device-stock-number-input" class="form-label">Stock Number:</label>
+                <input type="text" class="form-control form-control-sm" id="device-stock-number-input" placeholder="Enter Stock Number" />
+              </div>
+
+              <div class="form-group" id="device-channel-info-group" style="display: none;">
+                <span class="form-label">Panel Channel:</span>
+                <div id="device-channel-info" class="form-text" style="padding: 8px; background: #f0f0f0; border-radius: 4px; color: #333; font-weight: 500;"></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel: Spec -->
+          <div class="slide-panel" data-panel="spec">
+            <div id="device-spec-panel">
+              <div class="form-group">
+                <label for="device-ip-address-input" class="form-label">IP Address:</label>
+                <input type="text" class="form-control form-control-sm" id="device-ip-address-input" placeholder="e.g. 192.168.1.10" />
+              </div>
+
+              <div class="form-group">
+                <label for="device-subnet-input" class="form-label">Subnet:</label>
+                <input type="text" class="form-control form-control-sm" id="device-subnet-input" placeholder="e.g. 255.255.255.0" />
+              </div>
+
+              <div class="form-group">
+                <label for="device-gateway-input" class="form-label">Gateway Address:</label>
+                <input type="text" class="form-control form-control-sm" id="device-gateway-input" placeholder="e.g. 192.168.1.1" />
+              </div>
+
+              <div class="form-group">
+                <label for="device-mac-address-input" class="form-label">MAC Address:</label>
+                <input type="text" class="form-control form-control-sm" id="device-mac-address-input" placeholder="e.g. AA:BB:CC:DD:EE:FF" />
+              </div>
+
+              <div class="form-group">
+                <label for="device-focal-length-input" class="form-label">Focal Length:</label>
+                <input type="text" class="form-control form-control-sm" id="device-focal-length-input" placeholder="e.g. 2.8mm" />
+              </div>
+
+              <div class="form-group">
+                <label for="device-sensor-size-input" class="form-label">CMOS Sensor Size:</label>
+                <select class="form-control form-control-sm" id="device-sensor-size-input">
+                  <option value="">Select sensor size</option>
+                  <option value="1/1.1">1/1.1"</option>
+                  <option value="1/1.2">1/1.2"</option>
+                  <option value="2/3">2/3"</option>
+                  <option value="1/1.6">1/1.6"</option>
+                  <option value="1/1.7">1/1.7"</option>
+                  <option value="1/1.8">1/1.8"</option>
+                  <option value="1/1.9">1/1.9"</option>
+                  <option value="1/2.0" selected>1/2.0"</option>
+                  <option value="1/2.3">1/2.3"</option>
+                  <option value="1/2.5">1/2.5"</option>
+                  <option value="1/2.7">1/2.7"</option>
+                  <option value="1/2.8">1/2.8"</option>
+                  <option value="1/2.9">1/2.9"</option>
+                  <option value="1/3.0">1/3.0"</option>
+                  <option value="1/3.2">1/3.2"</option>
+                  <option value="1/3.4">1/3.4"</option>
+                  <option value="1/3.6">1/3.6"</option>
+                  <option value="1/4.0">1/4.0"</option>
+                  <option value="1/5.0">1/5.0"</option>
+                  <option value="1/6.0">1/6.0"</option>
+                  <option value="1/7.5">1/7.5"</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <label for="device-resolution-input" class="form-label">Resolution:</label>
+                <input type="text" class="form-control form-control-sm" id="device-resolution-input" placeholder="e.g. 1920x1080" />
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel: Coverage (Camera only) -->
+          <div class="slide-panel" data-panel="coverage">
+            <div id="camera-properties">
+              <div class="checkbox-group">
+                <input class="form-check-input" type="checkbox" id="camera-coverage-toggle" checked />
+                <label class="form-check-label" for="camera-coverage-toggle">Show Camera Coverage</label>
+              </div>
+
+              <div class="form-group">
+                <label for="camera-angle-slider" class="form-label">Coverage Angle (°):</label>
+                <div class="slider-group">
+                  <input type="range" class="form-range flex-grow-1 slider" id="camera-angle-slider" min="1" max="360" step="1" value="90" />
+                  <span id="camera-angle-input" class="slider-value">90°</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="camera-distance-slider" class="form-label">Coverage Distance (m):</label>
+                <div class="slider-group">
+                  <input type="range" class="form-range flex-grow-1 slider" id="camera-distance-slider" min="1" max="500" step="0.1" value="10" />
+                  <span id="camera-distance-input" class="slider-value">10m</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="camera-opacity-slider" class="form-label">Coverage Opacity:</label>
+                <div class="slider-group">
+                  <input type="range" class="form-range flex-grow-1 slider" id="camera-opacity-slider" min="0.01" max="1" step="0.01" value="0.25" />
+                  <span id="camera-opacity-input" class="slider-value">25%</span>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="camera-edge-style" class="form-label">Coverage Edge Style:</label>
+                <select class="form-control form-control-sm" id="camera-edge-style">
+                  <option value="solid">Solid</option>
+                  <option value="dashed">Dashed</option>
+                  <option value="dotted">Dotted</option>
+                </select>
+              </div>
+
+              <div class="form-group">
+                <span class="form-label">Coverage Colour:</span>
+                <div class="color-grid change-coverage-colour">
+                  <div class="colour-icon" data-color="#a59b9b" style="background-color: #a59b9b"></div>
+                  <div class="colour-icon" data-color="#000000" style="background-color: #000000"></div>
+                  <div class="colour-icon" data-color="#305CDE" style="background-color: #305cde"></div>
+                  <div class="colour-icon" data-color="#2E6F40" style="background-color: #2e6f40"></div>
+                  <div class="colour-icon" data-color="#6a0dad" style="background-color: #6a0dad"></div>
+                  <div class="colour-icon" data-color="#8b0000" style="background-color: #8b0000"></div>
+                  <div class="colour-icon" data-color="#008B8B" style="background-color: #008b8b"></div>
+                  <div class="colour-picker-icon">
+                    <input type="color" id="coverage-color-picker" />
+                    <span class="color-picker-emoji">🎨</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Panel: Style (merged Label and Icon) -->
+          <div class="slide-panel" data-panel="style">
+            <!-- Icon Selection Section -->
+            <div class="mb-3 camera-icons-section">
+              <span class="form-label">Camera Icon:</span>
+              <div class="change-camera-icons d-flex justify-content-around align-items-center bg-light p-2 rounded mt-2">
+                <img src="./images/devices/fixed-camera.png" alt="Fixed Camera Icon" />
+                <img src="./images/devices/ptz-camera.png" alt="PTZ Camera Icon" />
+                <img src="./images/devices/box-camera.png" alt="Box Camera Icon" />
+                <img src="./images/devices/dome-camera.png" alt="Dome Camera Icon" />
+                <img src="./images/devices/bullet-camera.png" alt="Bullet Camera Icon" />
+                <img src="./images/devices/thermal-camera.png" alt="Thermal Camera Icon" />
+              </div>
+            </div>
+
+            <div class="mb-3 device-icons-section" style="display: none">
+              <span class="form-label">Device Icon:</span>
+              <div class="change-device-icons d-flex justify-content-around align-items-center bg-light p-2 rounded mt-2">
+                <img src="./images/devices/access-system.png" alt="Access System Icon" />
+                <img src="./images/devices/intruder-alarm.png" alt="Intruder Alarm Icon" />
+                <img src="./images/devices/fire-alarm.png" alt="Fire Alarm Icon" />
+                <img src="./images/devices/emergency-exit.png" alt="Emergency Exit Icon" />
+                <img src="./images/devices/fire-extinguisher.png" alt="Fire Extinguisher Icon" />
+                <img src="./images/devices/door-entry.png" alt="Door Entry Icon" />
+              </div>
+            </div>
+
+            <!-- Icon Color -->
+            <div class="form-group">
+              <span class="form-label">Device Icon Colour:</span>
+              <div class="color-grid change-icon-colour">
+                <div class="colour-icon" data-color="#fe8800" style="background-color: #fe8800"></div>
+                <div class="colour-icon" data-color="#00ffff" style="background-color: #00ffff"></div>
+                <div class="colour-icon" data-color="#fe0000" style="background-color: #fe0000"></div>
+                <div class="colour-icon" data-color="#66ff00" style="background-color: #66ff00"></div>
+                <div class="colour-icon" data-color="#ff00ff" style="background-color: #ff00ff"></div>
+                <div class="colour-icon" data-color="#FFDE21" style="background-color: #ffde21"></div>
+                <div class="colour-icon" data-color="#00ff7f" style="background-color: #00ff7f"></div>
+                <div class="colour-picker-icon">
+                  <input type="color" id="icon-color-picker" />
+                  <span class="color-picker-emoji">🎨</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Icon Size -->
+            <div class="form-group">
+              <label for="icon-size-slider" class="form-label">Icon Size (px):</label>
+              <div class="slider-group">
+                <input type="range" class="form-range flex-grow-1 slider" id="icon-size-slider" min="1" max="100" step="1" value="50" />
+                <span id="icon-size-input" class="slider-value">50px</span>
+              </div>
+            </div>
+            <div id="generic-properties">
+              <div class="form-group">
+                <span class="form-label">Device Text Colour:</span>
+                <div class="color-grid device-text-colour">
+                  <div class="colour-icon" data-color="#bcb8b1" style="background-color: #bcb8b1"></div>
+                  <div class="colour-icon" data-color="#48bfe3" style="background-color: #48bfe3"></div>
+                  <div class="colour-icon" data-color="#74c69d" style="background-color: #74c69d"></div>
+                  <div class="colour-icon" data-color="#ffbe0b" style="background-color: #ffbe0b"></div>
+                  <div class="colour-icon" data-color="#ff6f42" style="background-color: #ff6f42"></div>
+                  <div class="colour-icon" data-color="#a2d2ff" style="background-color: #a2d2ff"></div>
+                  <div class="colour-icon" data-color="#cdb4db" style="background-color: #cdb4db"></div>
+                  <div class="colour-picker-icon">
+                    <input type="color" id="device-text-color-picker" />
+                    <span class="color-picker-emoji">🎨</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <span class="form-label">Device Background Text Colour:</span>
+                <div class="color-grid device-background-text-colour">
+                  <div class="colour-icon" data-color="#000000" style="background-color: #000000"></div>
+                  <div class="colour-icon" data-color="#4A4A4A" style="background-color: #4a4a4a"></div>
+                  <div class="colour-icon" data-color="#B22222" style="background-color: #b22222"></div>
+                  <div class="colour-icon" data-color="#228B22" style="background-color: #228b22"></div>
+                  <div class="colour-icon" data-color="#1E3A8A" style="background-color: #1e3a8a"></div>
+                  <div class="colour-icon" data-color="#5B2C6F" style="background-color: #5b2c6f"></div>
+                  <div class="colour-icon" data-color="#2F4F4F" style="background-color: #2f4f4f"></div>
+                  <div class="colour-picker-icon">
+                    <input type="color" id="device-background-text-color-picker" />
+                    <span class="color-picker-emoji">🎨</span>
+                  </div>
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label for="icon-rotation-slider" class="form-label">Icon Rotation:</label>
+                <div class="slider-group">
+                  <input type="range" class="form-range flex-grow-1 slider" id="icon-rotation-slider" min="0" max="360" step="1" value="0" />
+                  <span id="icon-rotation-input" class="slider-value">0°</span>
+                </div>
+              </div>
+
+              <!-- Show Device Name Toggle -->
+              <div class="checkbox-group">
+                <input class="form-check-input" type="checkbox" id="device-label-toggle" checked />
+                <label class="form-check-label" for="device-label-toggle">Show Device Name</label>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+
+    <!-- Polygon Properties Popover (Zones & Rooms) - Updated with Navigation -->
+    <div class="property-popover" id="polygon-popover" style="display: none">
+      <div class="popover-arrow"></div>
+      <div class="popover-header">
+        <span id="polygon-popover-title">Zone Properties</span>
+        <button id="polygon-popover-close" style="background: none; border: none; color: white; cursor: pointer; font-size: 18px">×</button>
+      </div>
+
+      <div class="panel-navigation">
+        <div class="nav-item active" data-panel="details">Details</div>
+        <div class="nav-item" data-panel="appearance">Appearance</div>
+      </div>
+
+      <div class="sliding-panels">
+        <!-- Panel: Details -->
+        <div class="slide-panel active" data-panel="details">
+          
+          <!-- Zone Properties -->
+          <div id="zone-properties">
+            
+
+            <div class="mb-3">
+              <label for="zone-label-input" class="form-label">Zone Name:</label>
+              <input type="text" class="form-control" id="zone-label-input" placeholder="Enter zone name" />
+            </div>
+
+            <div class="mb-3">
+              <label for="zone-number-input" class="form-label">Zone Number:</label>
+              <input type="text" class="form-control" id="zone-number-input" placeholder="Enter zone number" />
+            </div>
+
+            <div class="mb-3">
+              <label for="zone-resistance-value-input" class="form-label">Zone Resistance Value:</label>
+              <input type="text" class="form-control" id="zone-resistance-value-input" placeholder="Enter zone resistance value" />
+            </div>
+
+            <div class="mb-3">
+              <label for="zone-notes-input" class="form-label">Zone Notes:</label>
+              <input type="text" class="form-control" id="zone-notes-input" placeholder="Enter zone notes" />
+            </div>
+
+            <div class="mb-3">
+              <label for="zone-height-slider" class="form-label">Zone Height (m):</label>
+              <div class="slider-group">
+                <input type="range" class="form-range flex-grow-1 slider" id="zone-height-slider" min="1" max="10" step="0.1" value="2.4" />
+                <span id="zone-height-input" class="slider-value">2.4m</span>
+              </div>
+              <small id="zone-warning" class="text-warning"></small>
+            </div>
+
+            <div class="mb-3">
+              <span class="form-label">Devices in Zone:</span>
+              <div id="zone-devices-list" class="bg-light p-2 rounded text-dark" style="max-height: 200px; overflow-y: auto"></div>
+            </div>
+          </div>
+
+          <!-- Room Properties -->
+          <div id="room-properties" style="display: none">
+            <div class="mb-3">
+              <label for="room-label-input" class="form-label">Room Name:</label>
+              <input type="text" class="form-control" id="room-label-input" placeholder="Enter room name" />
+            </div>
+
+            <div class="mb-3">
+              <label for="room-notes-input" class="form-label">Room Notes:</label>
+              <input type="text" class="form-control" id="room-notes-input" placeholder="Enter room notes" />
+            </div>
+
+            <div class="mb-3">
+              <label for="room-height-slider" class="form-label">Room Height (m):</label>
+              <div class="slider-group">
+                <input type="range" class="form-range flex-grow-1 slider" id="room-height-slider" min="1" max="10" step="0.1" value="2.4" />
+                <span id="room-height-input" class="slider-value">2.4m</span>
+              </div>
+              <small id="room-warning" class="text-warning"></small>
+            </div>
+
+            <div class="mb-3">
+              <span class="form-label">Devices in Room:</span>
+              <div id="room-devices-list" class="bg-light p-2 rounded text-dark" style="max-height: 200px; overflow-y: auto"></div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Zone Panel: Appearance -->
+        <div class="slide-panel" data-panel="appearance">
+          <div id="zone-appearance-properties">
+
+            <div class="row mb-3">
+              <div class="col-6">
+                <div class="checkbox-group">
+                  <input class="form-check-input" type="checkbox" id="zone-name-toggle" checked />
+                  <label class="form-check-label" for="zone-name-toggle"> Show Name </label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="checkbox-group">
+                  <input class="form-check-input" type="checkbox" id="zone-area-toggle" />
+                  <label class="form-check-label" for="zone-area-toggle"> Show Area </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-6">
+                <div class="checkbox-group">
+                  <input class="form-check-input" type="checkbox" id="zone-volume-toggle" />
+                  <label class="form-check-label" for="zone-volume-toggle"> Show Volume </label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="checkbox-group">
+                  <input class="form-check-input" type="checkbox" id="zone-notes-toggle" />
+                  <label class="form-check-label" for="zone-notes-toggle"> Show Notes </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <span class="form-label">Zone Colour:</span>
+              <div class="change-zone-colour colour-palette">
+                <div class="colour-icon" data-color="#E05252" style="background-color: #e05252;"></div>
+                <div class="colour-icon" data-color="#52E052" style="background-color: #52e052;"></div>
+                <div class="colour-icon" data-color="#5252E0" style="background-color: #5252e0;"></div>
+                <div class="colour-icon" data-color="#E0E052" style="background-color: #e0e052;"></div>
+                <div class="colour-icon" data-color="#52E0E0" style="background-color: #52e0e0;"></div>
+                <div class="colour-icon" data-color="#E052E0" style="background-color: #e052e0;"></div>
+                <div class="colour-icon" data-color="#00BFFF" style="background-color: #00bfff;"></div>
+                <label class="colour-picker-icon">
+                  <input type="color" id="zone-color-picker"/>
+                  <span>🎨</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="zone-text-size-slider" class="form-label">Zone Text Size (px):</label>
+              <div class="slider-group">
+                <input type="range" class="form-range flex-grow-1 slider" id="zone-text-size-slider" min="1" max="100" step="1" value="15" />
+                <span id="zone-text-size-input" class="slider-value">15px</span>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <span class="form-label">Zone Text Colour:</span>
+              <div class="zone-text-colour colour-palette">
+                <div class="colour-icon" data-color="#000000" style="background-color: #000000;"></div>
+                <div class="colour-icon" data-color="#4A4A4A" style="background-color: #4a4a4a;"></div>
+                <div class="colour-icon" data-color="#B22222" style="background-color: #b22222;"></div>
+                <div class="colour-icon" data-color="#228B22" style="background-color: #228b22;"></div>
+                <div class="colour-icon" data-color="#1E3A8A" style="background-color: #1e3a8a;"></div>
+                <div class="colour-icon" data-color="#5B2C6F" style="background-color: #5b2c6f;"></div>
+                <div class="colour-icon" data-color="#2f4f4f" style="background-color: #2f4f4f;"></div>
+                <label class="colour-picker-icon">
+                  <input type="color" id="zone-text-color-picker"/>
+                  <span>🎨</span>
+                </label>
+              </div>
+            </div>
+
+            
+
+          </div>
+
+          <!-- Room Appearance Properties -->
+          <div id="room-appearance-properties" style="display: none">
+
+            <div class="row mb-3">
+              <div class="col-6">
+                <div class="checkbox-group">
+                  <input class="form-check-input" type="checkbox" id="room-name-toggle" checked />
+                  <label class="form-check-label" for="room-name-toggle"> Show Name </label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="checkbox-group">
+                  <input class="form-check-input" type="checkbox" id="room-area-toggle" />
+                  <label class="form-check-label" for="room-area-toggle"> Show Area </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="row mb-3">
+              <div class="col-6">
+                <div class="checkbox-group">
+                  <input class="form-check-input" type="checkbox" id="room-volume-toggle" />
+                  <label class="form-check-label" for="room-volume-toggle"> Show Volume </label>
+                </div>
+              </div>
+              <div class="col-6">
+                <div class="checkbox-group">
+                  <input class="form-check-input" type="checkbox" id="room-notes-toggle" />
+                  <label class="form-check-label" for="room-notes-toggle"> Show Notes </label>
+                </div>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <span class="form-label">Room Outline Color:</span>
+              <div class="change-room-colour colour-palette">
+                <div class="colour-icon" data-color="#0066cc" style="background-color: #0066cc;"></div>
+                <div class="colour-icon" data-color="#cc0066" style="background-color: #cc0066;"></div>
+                <div class="colour-icon" data-color="#66cc00" style="background-color: #66cc00;"></div>
+                <div class="colour-icon" data-color="#cc6600" style="background-color: #cc6600;"></div>
+                <div class="colour-icon" data-color="#6600cc" style="background-color: #6600cc;"></div>
+                <div class="colour-icon" data-color="#00cc66" style="background-color: #00cc66;"></div>
+                <div class="colour-icon" data-color="#cc0000" style="background-color: #cc0000;"></div>
+                <label class="colour-picker-icon">
+                  <input type="color" id="room-color-picker"/>
+                  <span>🎨</span>
+                </label>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <label for="room-text-size-slider" class="form-label">Room Text Size (px):</label>
+              <div class="slider-group">
+                <input type="range" class="form-range flex-grow-1 slider" id="room-text-size-slider" min="10" max="30" step="1" value="14" />
+                <span id="room-text-size-input" class="slider-value">14px</span>
+              </div>
+            </div>
+
+            <div class="mb-3">
+              <span class="form-label">Room Text Color:</span>
+              <div class="room-text-colour colour-palette">
+                <div class="colour-icon" data-color="#0066cc" style="background-color: #0066cc;"></div>
+                <div class="colour-icon" data-color="#000000" style="background-color: #000000;"></div>
+                <div class="colour-icon" data-color="#cc0066" style="background-color: #cc0066;"></div>
+                <div class="colour-icon" data-color="#66cc00" style="background-color: #66cc00;"></div>
+                <div class="colour-icon" data-color="#cc6600" style="background-color: #cc6600;"></div>
+                <div class="colour-icon" data-color="#6600cc" style="background-color: #6600cc;"></div>
+                <div class="colour-icon" data-color="#333333" style="background-color: #333333;"></div>
+                <label class="colour-picker-icon">
+                  <input type="color" id="room-text-color-picker"/>
+                  <span>🎨</span>
+                </label>
+              </div>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Print Report -->
+    <div id="print-container">
+      <div class="print-header">
+        <div class="client-info-section">
+          <p><strong>Client:</strong> <span id="print-client-name"></span></p>
+          <p><strong>Address:</strong> <span id="print-address"></span></p>
+          <p><strong>Date:</strong> <span id="print-date"></span></p>
+        </div>
+        <div class="logo-section">
+          <img id="print-logo" />
+        </div>
+      </div>
+      <div class="report-info-section">
+        <h1 id="print-report-title"></h1>
+      </div>
+      <div class="canvas-section"></div>
+    </div>
+
+    <!-- Project Gallery Modal -->
+    <div class="modal custom-modal" id="projectGalleryModal" tabindex="-1" aria-labelledby="projectGalleryModalLabel" aria-hidden="true">
+      <div class="modal-dialog modal-xl modal-fullscreen-lg-down">
+        <div class="modal-content">
+          <div class="modal-header">
+            <h1 class="modal-title fs-4" id="projectGalleryModalLabel">Project Gallery</h1>
+            <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+          </div>
+          <div class="modal-body">
+            <div class="project-gallery-container">
+              <!-- Tabs -->
+              <ul class="nav nav-tabs mb-4" id="galleryTabs" role="tablist">
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link active" id="projects-tab" data-bs-toggle="tab" data-bs-target="#projects-pane" type="button" role="tab">
+                    📁 My Projects
+                  </button>
+                </li>
+                <li class="nav-item" role="presentation">
+                  <button class="nav-link" id="templates-tab" data-bs-toggle="tab" data-bs-target="#templates-pane" type="button" role="tab">
+                    📄 Templates
+                  </button>
+                </li>
+              </ul>
+
+              <!-- Tab Content -->
+              <div class="tab-content" id="galleryTabContent">
+                <!-- Projects Pane -->
+                <div class="tab-pane fade show active" id="projects-pane" role="tabpanel">
+                  <div class="gallery-toolbar mb-3">
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                      <div>
+                        <input type="text" class="form-control" id="project-search" placeholder="Search projects..." style="max-width: 300px;" />
+                      </div>
+                      <div class="d-flex gap-2">
+                        <button class="btn btn-primary" id="save-current-project-btn">
+                          💾 Save Current Project
+                        </button>
+                        <div class="btn-group">
+                          <button type="button" class="btn btn-outline-primary dropdown-toggle" data-bs-toggle="dropdown" aria-expanded="false">
+                            ⚙️ More
+                          </button>
+                          <ul class="dropdown-menu">
+                            <li><a class="dropdown-item" href="#" id="export-all-projects-btn">📦 Export All Projects</a></li>
+                            <li><a class="dropdown-item" href="#" id="import-project-btn">📥 Import Project</a></li>
+                            <li><a class="dropdown-item" href="#" id="import-backup-btn">📥 Import Backup</a></li>
+                            <li><hr class="dropdown-divider"></li>
+                            <li><small class="dropdown-item text-muted">💡 Projects are saved in your browser. Export to backup!</small></li>
+                          </ul>
+                        </div>
+                        <input type="file" id="import-project-input" accept=".json" style="display: none" />
+                        <input type="file" id="import-backup-input" accept=".json" style="display: none" />
+                      </div>
+                    </div>
+                  </div>
+                  <div class="projects-grid" id="projects-grid">
+                    <!-- Projects will be dynamically loaded here -->
+                  </div>
+                  <div class="empty-state" id="projects-empty-state" style="display: none;">
+                    <div class="text-center py-5">
+                      <span style="font-size: 4rem;">📁</span>
+                      <p class="mt-3 text-muted">No saved projects yet. Save your first project to get started!</p>
+                    </div>
+                  </div>
+                </div>
+
+                <!-- Templates Pane -->
+                <div class="tab-pane fade" id="templates-pane" role="tabpanel">
+                  <div class="gallery-toolbar mb-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                      <div>
+                        <input type="text" class="form-control" id="template-search" placeholder="Search templates..." style="max-width: 300px;" />
+                      </div>
+                      <div>
+                        <button class="btn btn-success" id="save-as-template-btn">
+                          📄 Save Current as Template
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="templates-grid" id="templates-grid">
+                    <!-- Templates will be dynamically loaded here -->
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Project Card Template -->
+    <template id="project-card-template">
+      <div class="project-card">
+        <div class="project-card-thumbnail">
+          <img src="" alt="Project thumbnail" class="thumbnail-image" />
+          <div class="project-card-overlay">
+            <button class="btn btn-sm btn-light open-project-btn" title="Open Project">
+              📂 Open
+            </button>
+            <button class="btn btn-sm btn-light delete-project-btn" title="Delete Project">
+              🗑️
+            </button>
+            <button class="btn btn-sm btn-light duplicate-project-btn" title="Duplicate Project">
+              📋
+            </button>
+            <button class="btn btn-sm btn-light export-project-btn" title="Export Project">
+              💾
+            </button>
+          </div>
+        </div>
+        <div class="project-card-info">
+          <h5 class="project-card-title"></h5>
+          <p class="project-card-date text-muted"></p>
+          <p class="project-card-description"></p>
+        </div>
+      </div>
+    </template>
+
+    <main>
+      <div class="canvas-container">
+        <canvas id="canvas-layout"></canvas>
+      </div>
+    </main>
+
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fabric.js/5.3.1/fabric.min.js"></script>
+    <!-- Google Maps JS API -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyAx4DsAED53aflbG2KqEirKkFE4jMa6qGQ&loading=async&libraries=places"></script>
+    <script src="https://unpkg.com/cropperjs@1.5.13/dist/cropper.min.js"></script>
+    <script type="module" src="scripts/canvas/canvas-init.js"></script>
+    <script type="module" src="scripts/canvas/left-sidebars.js"></script>
+    <script type="module" src="scripts/sidebar/device-properties/device-popover.js"></script>
+    <script type="module" src="scripts/sidebar/polygon-properties/polygon-popover.js"></script>
+    <script type="module" src="scripts/devices/custom-icons.js"></script>
+    <script type="module" src="scripts/devices/text-devices.js"></script>
+    <script type="module" src="scripts/canvas/mobile-compatibility.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/js/bootstrap.bundle.min.js" integrity="sha384-ndDqU0Gzau9qJ1lfW4pNLlhNTkCfHzAVBReH9diLvGRem5+R9g2FzA8ZGN954O5Q" crossorigin="anonymous"></script>
+  </body>
+</html>
